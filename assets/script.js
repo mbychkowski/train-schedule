@@ -16,40 +16,56 @@ var destination = '';
 var frequency = '';
 var arrivalTime = '';
 
+// The current time;
+var now = moment();
+
 $('#add-train').on('click', function() {
   // Don't refresh the page!
   event.preventDefault();
 
   trainName = $('#name-input').val().trim();
   destination = $('#dest-input').val().trim();
+
+  // Use moment to format as needed
   frequency = $('#freq-input').val().trim();
-  arrivalTime = $('#time-input').val().trim();
+  // frequency = moment(frequency, 'mm');
+  arrival = $('#time-input').val().trim();
+
+  // var b = moment('23:10', 'HH:mm');
+  // var difference = arrivialTime.diff(now, 'minutes');
+  // console.log(difference);     // 1
+  // now.diff(b, 'years', true); // 1.75
 
   database.ref().push({
     trainName: trainName,
     destination: destination,
     frequency: frequency,
-    arrivalTime: arrivalTime
+    arrival: arrival
   });
 
   database.ref().on("child_added", function(snapshot) {
 
+    var trainData = snapshot.val();
+
     var newRow = $('<tr>');
 
     var newNameCol = $('<td>');
-    newNameCol.append(snapshot.val().trainName);
+    newNameCol.append(trainData.trainName);
 
     var newDestCol = $('<td>');
-    newDestCol.append(snapshot.val().destination);
+    newDestCol.append(trainData.destination);
 
     var newFreqCol = $('<td>');
-    newFreqCol.append(snapshot.val().frequency);
+    newFreqCol.append(trainData.frequency);
 
     var newArrivalTimeCol = $('<td>');
-    newArrivalTimeCol.append(snapshot.val().arrivalTime);
+    var arrivalTime = trainData.arrival;
+    newArrivalTimeCol.append(arrivalTime);
 
-    var newTimeRemainCol = $('<td>')
-    newTimeRemainCol.append('N/A');
+    var newTimeRemainCol = $('<td>');
+    arrivalTime = moment(arrivalTime, 'HH:mm');
+    var timeRemain = arrivalTime.diff(now, 'minutes');
+    newTimeRemainCol.append(timeRemain);
 
     newRow.append(newNameCol);
     newRow.append(newDestCol);
@@ -58,9 +74,11 @@ $('#add-train').on('click', function() {
     newRow.append(newTimeRemainCol);
 
     $('#train-data').append(newRow);
-    
+
     // Handle the errors
   }, function(errorObject) {
     console.log("Errors handled: " + errorObject.code);
   });
+
+  $('#train-form').reset();
 });
