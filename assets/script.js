@@ -23,27 +23,47 @@ $('#add-train').on('click', function() {
   // Don't refresh the page!
   event.preventDefault();
 
+  retrieveData();
+
+  $('#train-form')[0].reset();
+});
+
+$(document).keyup(function(event) {
+  if (event.keyCode === 13) {
+    $('#add-train').click()
+  }
+});
+
+// Display data when value is changed
+displayData();
+
+// Update every minute for train times
+// setInterval(function() {
+//   window.location.reload();
+// }, 60000);
+
+function retrieveData() {
+
   trainName = $('#name-input').val().trim();
   destination = $('#dest-input').val().trim();
 
-  // Use moment to format as needed
   frequency = $('#freq-input').val().trim();
-  // frequency = moment(frequency, 'mm');
   arrival = $('#time-input').val().trim();
-
-  // var b = moment('23:10', 'HH:mm');
-  // var difference = arrivialTime.diff(now, 'minutes');
-  // console.log(difference);     // 1
-  // now.diff(b, 'years', true); // 1.75
 
   database.ref().push({
     trainName: trainName,
     destination: destination,
     frequency: frequency,
-    arrival: arrival
+    arrival: arrival,
+    dateAdded: firebase.database.ServerValue.TIMESTAMP
+
   });
 
-  database.ref().on("child_added", function(snapshot) {
+}
+
+function displayData() {
+
+  database.ref().orderByChild('arrival').on('child_added', function(snapshot) {
 
     var trainData = snapshot.val();
 
@@ -74,11 +94,5 @@ $('#add-train').on('click', function() {
     newRow.append(newTimeRemainCol);
 
     $('#train-data').append(newRow);
-
-    // Handle the errors
-  }, function(errorObject) {
-    console.log("Errors handled: " + errorObject.code);
   });
-
-  $('#train-form').reset();
-});
+}
