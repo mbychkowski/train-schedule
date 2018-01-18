@@ -15,4 +15,4 @@ A simple train scheduler. User can input train name, destination, next arrival t
 
 ## Examples
 
-![alt text](/img.png)
+![alt text](train-schedule/assets/libraries/Screen Shot 2018-01-18 at 6.19.22 PM.png)
