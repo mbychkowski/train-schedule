@@ -38,9 +38,9 @@ $(document).keyup(function(event) {
 displayData();
 
 // Update every minute for train times
-// setInterval(function() {
-//   window.location.reload();
-// }, 60000);
+setInterval(function() {
+  window.location.reload();
+}, 60000);
 
 function retrieveData() {
 
